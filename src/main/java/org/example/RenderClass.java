@@ -113,6 +113,7 @@ public class RenderClass {
         System.out.println("Menu:");
         System.out.println("1. Play Game");
         System.out.println("2. Quit");
+        System.out.println("3. Help");
         System.out.print("Your choice: ");
     }
 
