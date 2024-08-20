@@ -53,18 +53,31 @@ public class NewGameCommand implements Command<Void>{
         game.setGuessedWord(guessedWord);
     }
 
-    private int guessWord(String line) {
-        int guesses = 0;
-        for (int i = 0; i < line.length(); i++) {
-            for (int j = 0; j < game.getCurrentWord().length(); j++) {
-                if (line.charAt(i) == game.getCurrentWord().charAt(j) && game.getGuessedWord()[j] == '_') {
-                    guesses += 1;
-                    game.setGuessedWordChar(line.charAt(i), j);
+    private void guessWord(String line) {
+        int index = game.getCurrentWord().indexOf(line);
+        if (index == -1) {
+            for (int i = 0; i < line.length(); i++) {
+                if (game.getMissesLeft() != 0) {
+                    game.setMissesLeft(game.getMissesLeft() - 1);
+                }else {
+                    if (game.getLives() != 0) {
+                        game.setLives(game.getLives() - 1);
+                        game.setMissesLeft(5);
+                    }else {
+                        break;
+                    }
                 }
             }
+        }else {
+            if (line.length() == 1) {
+                game.setScore(game.getScore() + 100);
+            }else if (line.length() == game.getCurrentWord().length()) {
+                game.setScore(game.getScore() + line.length() * 1000);
+            }else {
+                game.setScore(game.getScore() + 100 * line.length() * 2);
+            }
+            game.setGuessedWordChar(line);
         }
-
-        return guesses;
     }
 
     @Override
@@ -86,6 +99,7 @@ public class NewGameCommand implements Command<Void>{
                     break;
                 }
                 init();
+                continue;
             }
 
             if (game.getCharactersGuessed() != game.getCurrentWord().length()) {
@@ -98,7 +112,7 @@ public class NewGameCommand implements Command<Void>{
                     break;
                 }
 
-                game.changeVariables(guessWord(line));
+                guessWord(line);
             }else {
                 System.out.println("Congratulation! You've guessed the word!");
                 System.out.print("Do you want to continue (Yes/No): ");

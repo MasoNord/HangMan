@@ -9,19 +9,6 @@ public class Game {
     private String currentWord;
     private char[] guessedWord;
 
-    public void changeVariables(int guesses) {
-        if (guesses != 0) {
-            score += 100 * guesses;
-        }else {
-            if (missesLeft == 0) {
-                lives -= 1;
-                missesLeft = 5;
-            }else {
-                missesLeft -= 1;
-            }
-        }
-    }
-
     public int getLives() {
         return lives;
     }
@@ -78,10 +65,14 @@ public class Game {
         this.guessedWord = guessedWord;
     }
 
-    public void setGuessedWordChar(char ch, int i) {
-        if (guessedWord[i] == '_') {
-            guessedWord[i] = ch;
-            charactersGuessed += 1;
+    public void setGuessedWordChar(String str) {
+        for (int i = 0; i < str.length(); i++) {
+            for (int j = 0; j < currentWord.length(); j++) {
+                if (str.charAt(i) == currentWord.charAt(j) && guessedWord[j] == '_') {
+                    guessedWord[j] = str.charAt(i);
+                    charactersGuessed += 1;
+                }
+            }
         }
     }
 }
