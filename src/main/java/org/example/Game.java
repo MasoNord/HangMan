@@ -65,14 +65,17 @@ public class Game {
         this.guessedWord = guessedWord;
     }
 
-    public void setGuessedWordChar(String str) {
+    public int setGuessedWordChar(String str) {
+        int result = 0;
         for (int i = 0; i < str.length(); i++) {
             for (int j = 0; j < currentWord.length(); j++) {
                 if (str.charAt(i) == currentWord.charAt(j) && guessedWord[j] == '_') {
                     guessedWord[j] = str.charAt(i);
                     charactersGuessed += 1;
+                    result++;
                 }
             }
         }
+        return result;
     }
 }

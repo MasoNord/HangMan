@@ -87,7 +87,6 @@ public class RenderClass {
             _________________/ |
             _________________|/
             """,
-
     };
 
     public void renderIntroMenu() {

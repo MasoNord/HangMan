@@ -14,6 +14,8 @@ import java.util.Random;
 public class NewGameCommand implements Command<Void>{
     private final Game game;
     private final RenderClass renderClass;
+    private final InputStreamReader input = new InputStreamReader(System.in);
+    private final BufferedReader reader = new BufferedReader(input);
     private List<String> listOfWords;
 
     public NewGameCommand(Game game, RenderClass renderClass) throws IOException {
@@ -53,7 +55,7 @@ public class NewGameCommand implements Command<Void>{
         game.setGuessedWord(guessedWord);
     }
 
-    private void guessWord(String line) {
+    private void guessWord(String line) throws IOException {
         int index = game.getCurrentWord().indexOf(line);
         if (index == -1) {
             for (int i = 0; i < line.length(); i++) {
@@ -69,59 +71,73 @@ public class NewGameCommand implements Command<Void>{
                 }
             }
         }else {
-            if (line.length() == 1) {
-                game.setScore(game.getScore() + 100);
-            }else if (line.length() == game.getCurrentWord().length()) {
-                game.setScore(game.getScore() + line.length() * 1000);
+            int guessed = game.setGuessedWordChar(line);
+            if (guessed != 0) {
+                if (line.length() == 1) {
+                    game.setScore(game.getScore() + 100);
+                }else if (line.length() == game.getCurrentWord().length()) {
+                    game.setScore(game.getScore() + line.length() * 1000);
+                }else {
+                    game.setScore(game.getScore() + 100 * line.length() * 2);
+                }
             }else {
-                game.setScore(game.getScore() + 100 * line.length() * 2);
+                System.out.println("You've already guessed this sequence, try another one");
+                System.out.print("Press any key to continue...");
+                reader.readLine();
             }
-            game.setGuessedWordChar(line);
         }
+    }
+
+    private boolean validate(String line) {
+        for (int i = 0; i < line.length(); i++) {
+            if (Character.isUpperCase(line.charAt(i)) || Character.isDigit(line.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public void execute() throws IOException {
         init();
-        InputStreamReader input = new InputStreamReader(System.in);
-        BufferedReader reader = new BufferedReader(input);
         while(true) {
             renderClass.drawGameMenu(game);
-            // TODO: make validation so user must enter either yes or no
             if (game.getLives() == 0 && game.getMissesLeft() == 0) {
                 System.out.println("You've lost all your lives :(");
-                System.out.print("Do you want to start a new game (Yes/No): ");
+                System.out.print("If you want to continue press any key otherwise type No: ");
                 String line = reader.readLine();
                 if (line.equalsIgnoreCase("no")) {
                     System.out.println("Thank you for your time and I hope to see you again!");
-                    System.out.println("Press any key to continue...");
+                    System.out.print("Press any key to continue...");
                     reader.readLine();
                     break;
                 }
                 init();
                 continue;
             }
-
-            // TODO: make validation of the input
             if (game.getCharactersGuessed() != game.getCurrentWord().length()) {
                 System.out.print("Next guess (Type '!' to Quit): ");
                 String line = reader.readLine();
                 if (line.equals("!")) {
                     System.out.println("Have a nice day!");
-                    System.out.println("Press any key to continue...");
+                    System.out.print("Press any key to continue...");
                     reader.readLine();
                     break;
                 }
-
-                guessWord(line);
+                if (validate(line)) {
+                    guessWord(line);
+                }else {
+                    System.out.println("Please DO NOT enter upper case letters and digits!");
+                    System.out.print("Press any key to continue...");
+                    reader.readLine();
+                }
             }else {
-                // TODO: make validation so user must enter either yes or no
                 System.out.println("Congratulation! You've guessed the word!");
-                System.out.print("Do you want to continue (Yes/No): ");
+                System.out.print("If you want to continue press any key otherwise type No: ");
                 String line = reader.readLine();
                 if (line.equalsIgnoreCase("no")) {
                     System.out.println("Thank you for your time and I hope to see you again!");
-                    System.out.println("Press any key to continue...");
+                    System.out.print("Press any key to continue...");
                     reader.readLine();
                     break;
                 }else {
