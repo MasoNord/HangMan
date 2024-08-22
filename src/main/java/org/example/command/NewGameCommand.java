@@ -87,7 +87,7 @@ public class NewGameCommand implements Command<Void>{
         BufferedReader reader = new BufferedReader(input);
         while(true) {
             renderClass.drawGameMenu(game);
-
+            // TODO: make validation so user must enter either yes or no
             if (game.getLives() == 0 && game.getMissesLeft() == 0) {
                 System.out.println("You've lost all your lives :(");
                 System.out.print("Do you want to start a new game (Yes/No): ");
@@ -102,6 +102,7 @@ public class NewGameCommand implements Command<Void>{
                 continue;
             }
 
+            // TODO: make validation of the input
             if (game.getCharactersGuessed() != game.getCurrentWord().length()) {
                 System.out.print("Next guess (Type '!' to Quit): ");
                 String line = reader.readLine();
@@ -114,6 +115,7 @@ public class NewGameCommand implements Command<Void>{
 
                 guessWord(line);
             }else {
+                // TODO: make validation so user must enter either yes or no
                 System.out.println("Congratulation! You've guessed the word!");
                 System.out.print("Do you want to continue (Yes/No): ");
                 String line = reader.readLine();
